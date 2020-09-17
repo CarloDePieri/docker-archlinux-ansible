@@ -18,7 +18,7 @@ Now edit the `'platforms'` section inside the file `molecule/default/molecule.ym
 ```yml
 platforms:
   - name: cdp-arch-ansible
-    image: carlodepieri/docker-archlinux-ansible
+    image: carlodepieri/docker-archlinux-ansible:latest
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
