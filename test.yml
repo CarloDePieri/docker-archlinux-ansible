@@ -1,0 +1,9 @@
+---
+- name: A simple test playbook
+  hosts: all
+
+  tasks:
+    - name: Check that vim is installed
+      package:
+        name: vim
+        state: present

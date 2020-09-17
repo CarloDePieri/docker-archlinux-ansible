@@ -1,0 +1,53 @@
+---
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "master"
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "warning"
+  schedule:
+    - cron: "0 0 * */1 *"
+    # - cron: "*/5 * * * *" # 5 min testing
+
+jobs:
+  build:
+    name: CI
+    runs-on: ubuntu-latest
+    env:
+      using_act: ${{ github.actor == 'nektos/act'}}
+      is_cron: ${{ github.event_name == 'schedule' }}
+
+    steps:
+      - name: Checkout.
+        uses: actions/checkout@v2
+
+      - name: Build the image.
+        run: make
+
+      # Act sadly needs some specific behavior here, hence the branching
+      - name: Run the container (on GitHub).
+        if: env.using_act == 'false'
+        run: make run
+      - name: Run the container (using Act).
+        if: env.using_act == 'true'
+        run: make ACT_GITHUB_WORKSPACE=$GITHUB_WORKSPACE run-container-act
+
+      - name: Test the container.
+        run: make test
+
+      - name: Cleanup container (using Act).
+        if: env.using_act == 'true'
+        run: make clean-container
+
+      # Dockerhub already rebuild on push, this ensure a scheduled rebuild if everything is working
+      - name: Trigger Dockerhub rebuild (only on cron jobs).
+        if: env.is_cron == 'true'
+        run: |
+          echo "Trigger a Dockerhub image rebuild via web hook (started by a cron job)."
