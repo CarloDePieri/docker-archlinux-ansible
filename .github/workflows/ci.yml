@@ -13,8 +13,8 @@ on:
         required: true
         default: "warning"
   schedule:
-    - cron: "0 0 * */1 *"
-    # - cron: "*/5 * * * *" # 5 min testing
+    # - cron: "0 0 * */1 *"
+    - cron: "*/5 * * * *" # 5 min testing
 
 jobs:
   build:
@@ -51,4 +51,4 @@ jobs:
         if: env.is_cron == 'true'
         run: |
           echo "Trigger a Dockerhub image rebuild via web hook (started by a cron job)."
-          curl -X POST "${{ secrets.dockerhub_trigger }}"
+          curl -f -s -X POST "${{ secrets.dockerhub_trigger }}" 1>/dev/null
