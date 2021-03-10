@@ -1,8 +1,7 @@
 ---
-name: CI
+name: prod
 
 on:
-  pull_request:
   push:
     branches:
       - "master"
@@ -17,8 +16,8 @@ on:
     # - cron: "*/5 * * * *" # 5 min testing
 
 jobs:
-  build:
-    name: CI
+  ci:
+    name: ci
     runs-on: ubuntu-latest
     env:
       using_act: ${{ github.actor == 'nektos/act'}}
@@ -39,6 +38,9 @@ jobs:
         if: env.using_act == 'true'
         run: make ACT_GITHUB_WORKSPACE=$GITHUB_WORKSPACE run-container-act
 
+      - name: Wait for the container to spin up.
+        run: sleep 10
+
       - name: Test the container.
         run: make test
 
@@ -46,10 +48,25 @@ jobs:
         if: env.using_act == 'true'
         run: make clean-container
 
-      # Dockerhub already rebuild on push, this ensure a scheduled rebuild if everything is working
-      - name: Trigger Dockerhub rebuild (only on cron jobs).
-        if: env.is_cron == 'true'
-        run: |
-          echo "Triggering a Dockerhub image rebuild via web hook (started by a cron job)..."
-          curl -f -s -X POST "${{ secrets.dockerhub_trigger }}" 1>/dev/null
-          echo "Done!"
+  deploy:
+    needs: ci
+    name: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: carlodepieri/docker-archlinux-ansible:latest
