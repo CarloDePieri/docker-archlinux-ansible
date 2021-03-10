@@ -1,0 +1,48 @@
+---
+name: dev
+
+on:
+  pull_request:
+    branches:
+      - "master"
+  push:
+    branches:
+      - "testing"
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "warning"
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    env:
+      using_act: ${{ github.actor == 'nektos/act'}}
+
+    steps:
+      - name: Checkout.
+        uses: actions/checkout@v2
+
+      - name: Build the image.
+        run: make
+
+      # Act sadly needs some specific behavior here, hence the branching
+      - name: Run the container (on GitHub).
+        if: env.using_act == 'false'
+        run: make run
+      - name: Run the container (using Act).
+        if: env.using_act == 'true'
+        run: make ACT_GITHUB_WORKSPACE=$GITHUB_WORKSPACE run-container-act
+
+      - name: Wait for the container to spin up.
+        run: sleep 10
+
+      - name: Test the container.
+        run: make test
+
+      - name: Cleanup container (using Act).
+        if: env.using_act == 'true'
+        run: make clean-container

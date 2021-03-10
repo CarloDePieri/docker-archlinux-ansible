@@ -1,9 +1,11 @@
 # Docker Archlinux for testing Ansible playbooks
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/carlodepieri/docker-archlinux-ansible/CI?logo=github)](https://github.com/CarloDePieri/docker-archlinux-ansible/actions) [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/carlodepieri/docker-archlinux-ansible?logo=docker)](https://hub.docker.com/r/carlodepieri/docker-archlinux-ansible)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/carlodepieri/docker-archlinux-ansible/prod?logo=github)](https://github.com/CarloDePieri/docker-archlinux-ansible/actions/workflows/prod.yml) [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/carlodepieri/docker-archlinux-ansible?logo=docker)](https://hub.docker.com/r/carlodepieri/docker-archlinux-ansible)
 
 An updated, systemd-enabled Archlinux docker image (based on my [docker-archlinux-systemd](https://hub.docker.com/r/carlodepieri/docker-archlinux-systemd))
 useful for testing ansible playbook.
+
+Images are built by GitHub CI and pushed to DockerHub at least once a month.
 
 ## Usage: testing with Molecule
 
@@ -112,18 +114,41 @@ make shell
 
 ### Testing the CI loop
 
-[Act](https://github.com/nektos/act) can be used to simulate locally the GitHub Actions loop. Keep in mind that this will use its [full image](https://hub.docker.com/r/nektos/act-environments-ubuntu/tags), which is really heavy (>18GB).
+[Act](https://github.com/nektos/act) can be used to execute locally the GitHub
+Actions loop. Keep in mind that this will use Act's
+[full image](https://hub.docker.com/r/nektos/act-environments-ubuntu/tags),
+which is really heavy (>18GB).
 
-To simulate a push event, run:
+To execute a 'push on a testing branch' event (which also triggers when pulling
+into master), run:
 
 ```bash
-act
+make act-dev
 ```
 
-To simulate a cron job trigger instead, run:
+To execute a 'push on master' event (which triggers also on scheduled cronjobs),
+with the relative DockerHub deploy:
 
 ```bash
-act schedule
+make act-prod
+```
+
+To access the act containers:
+
+```bash
+make act-dev-shell
+# or
+make act-prod-shell-ci
+# or
+make act-prod-shell-deploy
+```
+
+To quickly delete them the act containers:
+
+```bash
+make act-dev-clean
+# or
+make act-prod-clean
 ```
 
 Do note that the included CI loop will clear the containers used but NOT the image (to save from repetitive builds). This can be forced by running:
