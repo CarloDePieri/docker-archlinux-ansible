@@ -1,11 +1,10 @@
 FROM carlodepieri/docker-archlinux-systemd
 LABEL maintainer="depieri.carlo@gmail.com"
 
-# Update the system, install python, pip and vim; clean cache
+# Update the system, install python and pip; clean cache
 RUN pacman -Syu --noconfirm \
 python \
-python-pip \
-vim; \
+python-pip; \
 yes | pacman -Scc
 
 # Install ansible
