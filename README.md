@@ -14,7 +14,7 @@ Images on Docker Hub gets automatically built at least once a month by GitHub Ac
 
 A [working molecule installation](https://molecule.readthedocs.io/en/latest/installation.html) is also needed.
 
-Running `molecule init` will quick-start a project.
+Running `molecule init scenario --driver-name docker` will quick-start a project.
 Now edit the `'platforms'` section inside the file `molecule/default/molecule.yml`.
 
 ```yml
@@ -22,19 +22,17 @@ platforms:
   - name: cdp-arch-ansible
     image: carlodepieri/docker-archlinux-ansible:latest
     command: ${MOLECULE_DOCKER_COMMAND:-""}
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
     pre_build_image: true
 ```
 
 This will make molecule pull the image from Dockerhub and start the container in a way that
-supports systemd and ansible (mounting cgroup and running with privileged).
+supports systemd and ansible.
 
-> **Important**: these steps are necessary to make systemd behave,
+> **Important**: the privileged flag is necessary to make systemd behave,
 > but make sure to understand [the security concerns involved](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities).
 
-Remember that, after the container has been created (for example by `molecule converge`),
+After the container has been created (for example by `molecule converge`),
 a shell to inspect the container can be obtained with:
 
 ```bash
@@ -49,7 +47,7 @@ Clone the repo first with:
 git clone git@github.com:CarloDePieri/docker-archlinux-ansible.git
 ```
 
-### Building the image
+### Building the image from source
 
 A [working Docker installation](https://docs.docker.com/engine/install/) is needed.
 Then run:
@@ -72,7 +70,7 @@ successful build.
 Run:
 
 ```bash
-docker run --name=cdp-arch-ansible --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=`pwd`:/etc/ansible/roles/role_under_test:ro carlodepieri/docker-archlinux-ansible
+docker run --name=cdp-arch-ansible --detach --privileged --volume=`pwd`:/etc/ansible/roles/role_under_test:ro carlodepieri/docker-archlinux-ansible
 ```
 
 or, for convenience:
@@ -82,7 +80,25 @@ make run-container
 ```
 
 This should start the container, which can should be then visible in `docker ps`.
-It will also bind the current working directory inside the container, which can be handy to quickly test a playbook (like the included `test.yml`).
+It will also bind the current working directory inside the container, which can
+be handy to quickly test a playbook (like the included `test.yml`).
+
+### Support for manual cgroup binding
+
+If manual cgroup volume mounting is needed and the docker-archlinux-systemd
+image has been built as explained [here](https://github.com/CarloDePieri/docker-archlinux-systemd#compatibility-with-systems-that-need-cgroups-volumes),
+this image must be build as described above but then, for running the
+container, launch:
+
+```bash
+docker run --name=cdp-arch-ansible --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=`pwd`:/etc/ansible/roles/role_under_test:ro carlodepieri/docker-archlinux-ansible
+```
+
+or, for convenience:
+
+```bash
+make run-container-volume
+```
 
 ### Testing the container
 
@@ -151,7 +167,8 @@ make act-dev-clean
 make act-prod-clean
 ```
 
-Do note that the included CI loop will clear the containers used but NOT the image (to save from repetitive builds). This can be forced by running:
+Do note that the included CI loop will clear the containers used but NOT the
+image (to save from repetitive builds). This can be forced by running:
 
 ```bash
 make clean-image
