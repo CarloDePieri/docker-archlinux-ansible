@@ -27,10 +27,13 @@ build-image:
 	docker build -t $(TAG) .
 
 run-container:
+	docker run --name=$(NAME) --detach --privileged --volume=`pwd`:/etc/ansible/roles/role_under_test:ro $(TAG)
+
+run-container-volume:
 	docker run --name=$(NAME) --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=`pwd`:/etc/ansible/roles/role_under_test:ro $(TAG)
 
 run-container-act:
-	docker run --name=$(NAME) --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro $(TAG) && \
+	docker run --name=$(NAME) --detach --privileged $(TAG) && \
 	sleep 1 && \
 	docker exec -i $(NAME) mkdir -p /etc/ansible/roles/role_under_test && \
 	docker cp $(ACT_GITHUB_WORKSPACE)/. $(NAME):/etc/ansible/roles/role_under_test/.
@@ -69,4 +72,4 @@ act-prod-clean: clean-container
 		$(call rm_ctx_name,$(ACT_PROD_CTX_DEPLOY)) && \
 		$(call rm_ctx_id,$$(docker ps -a -q --filter ancestor=moby/buildkit:buildx-stable-1))
 
-.PHONY: clean clean-image clean-container test run-container run-container-act build-image shell run build ci all act-dev act-dev-shell act-dev-clean act-prod act-prod-shell-ci act-prod-shell-deploy act-prod-clean
+.PHONY: clean clean-image clean-container test run-container run-container-volume run-container-act build-image shell run build ci all act-dev act-dev-shell act-dev-clean act-prod act-prod-shell-ci act-prod-shell-deploy act-prod-clean
