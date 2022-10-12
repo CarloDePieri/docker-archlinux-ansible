@@ -4,7 +4,8 @@ LABEL maintainer="depieri.carlo@gmail.com"
 # Update the system, install python and pip; clean cache
 RUN pacman -Syu --noconfirm \
 python \
-python-pip; \
+python-pip \
+sudo; \
 yes | pacman -Scc
 
 # Install ansible
