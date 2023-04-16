@@ -86,7 +86,7 @@ https://www.mail-archive.com/debian-bugs-dist@lists.debian.org/msg1897574.html).
 This results in AUR package installation taking too long (sometimes -
 hours). 
 
-Ulimits for Docker containers can be set in the following ways:
+Ulimits for Docker containers can be set in one the following ways:
 - system-wide (see https://wiki.archlinux.org/title/Limits.conf)
 - just for Docker service (see
   https://bbs.archlinux.org/viewtopic.php?id=283460) by adding something
@@ -116,8 +116,9 @@ platforms:
       - nofile:65535:65535
 ```
 
-Consequently, if we want to Molecule 
-to test an Ansbile role or playbook that installs AUR packages we need
+Consequently, if we want Molecule 
+to test an Ansbile role or a playbook that installs AUR packages we need
+all of the following:
 - Pre-built Docker image with non-privileded user inside that container
 - Molecule contigured to
   - use that non-privileged Ansible (instead of using `root`)
