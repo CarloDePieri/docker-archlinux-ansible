@@ -82,7 +82,7 @@ provisioner:
 Moreover, `fakeroot` is known to be extremely slow when [nofile
 ulimit](https://wiki.archlinux.org/title/Limits.conf#nofile) is set to a
 high value (see
-https://www.mail-archive.com/debian-bugs-dist@lists.debian.org/msg1897574.html).
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=920913).
 This results in AUR package installation taking too long (sometimes -
 hours). 
 
