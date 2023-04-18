@@ -1,6 +1,6 @@
 # Docker Archlinux for testing Ansible playbooks
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/carlodepieri/docker-archlinux-ansible/prod?logo=github)](https://github.com/CarloDePieri/docker-archlinux-ansible/actions/workflows/prod.yml) [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/carlodepieri/docker-archlinux-ansible?logo=docker)](https://hub.docker.com/r/carlodepieri/docker-archlinux-ansible)
+[![prod](https://github.com/CarloDePieri/docker-archlinux-ansible/actions/workflows/prod.yml/badge.svg)](https://github.com/CarloDePieri/docker-archlinux-ansible/actions/workflows/prod.yml) [![Docker Cloud Automated build](https://img.shields.io/badge/docker%20build-automatic-success)](https://hub.docker.com/r/carlodepieri/docker-archlinux-ansible)
 
 An updated, systemd-enabled Archlinux docker image (based on my [docker-archlinux-systemd](https://hub.docker.com/r/carlodepieri/docker-archlinux-systemd))
 useful for testing Ansible playbook. 
@@ -40,7 +40,7 @@ provisioner:
 
 This will make molecule pull the image from Dockerhub and start the container in a way that
 - supports systemd and Ansible.
-- uses non-privileged `ansible` user (to allow to build AUR packages)
+- uses non-privileged, passwordless sudoer `ansible` user (to allow to build AUR packages)
 - uses lower `nofiles` ulimit value (to avoid problems with AUR package
   builds taking too long).
 
