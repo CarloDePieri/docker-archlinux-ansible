@@ -1,11 +1,21 @@
 # Docker Archlinux for testing Ansible playbooks
 
-[![prod](https://github.com/CarloDePieri/docker-archlinux-ansible/actions/workflows/prod.yml/badge.svg)](https://github.com/CarloDePieri/docker-archlinux-ansible/actions/workflows/prod.yml) [![Docker Cloud Automated build](https://img.shields.io/badge/docker%20build-automatic-success)](https://hub.docker.com/r/carlodepieri/docker-archlinux-ansible)
+[![prod](https://github.com/CarloDePieri/docker-archlinux-ansible/actions/workflows/prod.yml/badge.svg)](https://github.com/CarloDePieri/docker-archlinux-ansible/actions/workflows/prod.yml) [![Docker Cloud Automated build](https://img.shields.io/badge/docker%20build-automatic-success)](https://hub.docker.com/r/carlodepieri/docker-archlinux-ansible) [![Maintenance](https://img.shields.io/maintenance/yes/2025)](https://github.com/CarloDePieri/docker-archlinux-ansible)
 
 An updated, systemd-enabled Archlinux docker image (based on my [docker-archlinux-systemd](https://hub.docker.com/r/carlodepieri/docker-archlinux-systemd))
-useful for testing Ansible playbook. 
+useful for testing Ansible playbook.
 
-Images are built by GitHub CI and pushed to DockerHub at least once a month.
+Images are built by GitHub CI, tagged and pushed to DockerHub at least once a month.
+
+#### Available tags
+
+Arch is a rolling release distribution. This means that the [available tags](https://hub.docker.com/r/carlodepieri/docker-archlinux-ansible/tags)
+are nothing more than arbitrary snapshots of the distro at that particular time.
+
+Beware when using tags in automated testing environments: while usually a good
+practice, keep in mind that in reality Arch is changing daily and that a system
+test with a pinned environment could become useless quickly. A more in-depth
+discussion on this can be found [here](https://github.com/CarloDePieri/docker-archlinux-ansible/issues/6).
 
 ## Usage: testing with Molecule
 
