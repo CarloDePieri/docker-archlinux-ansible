@@ -77,3 +77,10 @@ jobs:
           tags: |
             carlodepieri/docker-archlinux-ansible:${{ steps.date.outputs.DATE }}
             carlodepieri/docker-archlinux-ansible:latest
+
+      - name: Keep the DockerHub readme in sync
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: carlodepieri/docker-archlinux-ansible
