@@ -77,4 +77,3 @@ jobs:
           tags: |
             carlodepieri/docker-archlinux-ansible:${{ steps.date.outputs.DATE }}
             carlodepieri/docker-archlinux-ansible:latest
-          target: build
